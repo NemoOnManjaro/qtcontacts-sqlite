@@ -1,0 +1,50 @@
+# $Id$
+# Contributor: Bart Ribbers <bribbers@disroot.org>
+# Contributor: Alexey Andreyev <aa13q@ya.ru>
+# Maintainer: James Kittsmiller (AJSlye) <james@nulogicsystems.com>
+
+_host="git.sailfishos.org"
+_project=mer-core
+_basename=contacts-sqlite
+_branch=master
+
+_gitname=qt${_basename}
+pkgname=qt5-$_basename-extensions-git
+
+pkgver=0.3.13.r0.gb89ddca
+
+pkgrel=2
+pkgdesc="SQLite-based plugin for QtPIM Contacts"
+arch=('x86_64' 'aarch64')
+url="https://$_host/$_project/$_gitname"
+license=('BSD-3-Clause')
+depends=('qt5-pim-git' 'qt5-mlite-git')
+makedepends=('git')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("${pkgname}::git+${url}" "0001-fix-build-with-newer-qt.patch" "0002-remove-obsolete-QContact-IgnoreAccessConstraints.patch")
+sha512sums=('SKIP' 'SKIP' 'SKIP')
+
+pkgver() {
+    cd "${srcdir}/${pkgname}"
+    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+    cd "${srcdir}/${pkgname}"
+    patch -p1 --input="${srcdir}/0001-fix-build-with-newer-qt.patch"
+    patch -p1 --input="${srcdir}/0002-remove-obsolete-QContact-IgnoreAccessConstraints.patch"
+}
+
+build() {
+    cd "${srcdir}/${pkgname}"
+    qmake-qt5 PREFIX=/usr
+    make
+}
+
+
+package() {
+    cd "${srcdir}/${pkgname}"
+    make INSTALL_ROOT="$pkgdir/" install
+}
+ 
