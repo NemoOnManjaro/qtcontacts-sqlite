@@ -3,40 +3,35 @@
 # Contributor: Alexey Andreyev <aa13q@ya.ru>
 # Maintainer: James Kittsmiller (AJSlye) <james@nulogicsystems.com>
 
-pkgname=qt5-contacts-sqlite-extensions-git
-pkgver=0.3.14.r0.gcff793e
+pkgname=qtcontacts-sqlite
+pkgver=0.3.18
 pkgrel=1
 pkgdesc="SQLite-based plugin for QtPIM Contacts"
 arch=('x86_64' 'aarch64')
 url="https://github.com/sailfishos/qtcontacts-sqlite"
 license=('BSD-3-Clause')
-depends=('qt5-pim-git' 'mlite')
-makedepends=('git')
-provides=("${pkgname%-git}")
-conflicts=("${pkgname%-git}")
-source=("${pkgname}::git+${url}" "0001-fix-build-with-newer-qt.patch" "0002-remove-obsolete-QContact-IgnoreAccessConstraints.patch")
-sha512sums=('SKIP' 'SKIP' 'SKIP')
-
-pkgver() {
-    cd "${srcdir}/${pkgname}"
-    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
-}
+depends=('qt5-pim' 'mlite')
+source=("${url}/archive/refs/tags/$pkgver.tar.gz"
+    "0001-fix-build-with-newer-qt.patch"
+    "0002-remove-obsolete-QContact-IgnoreAccessConstraints.patch")
+sha256sums=('7827e4aedf53f80f4d7240f7ec78c3b65095ee4a9e64ec86afa51eb0359faadd'
+    '35fe310dec658365354d3b2da90fc4211d6afb0be9e1914dcb1cc8b81e740390'
+    '03d72e86a485abd9d8230c5a41b9ba3d8d110164fe4869170f94b65c1b639382')
 
 prepare() {
-    cd "${srcdir}/${pkgname}"
+    cd $pkgname-$pkgver
     patch -p1 --input="${srcdir}/0001-fix-build-with-newer-qt.patch"
     patch -p1 --input="${srcdir}/0002-remove-obsolete-QContact-IgnoreAccessConstraints.patch"
 }
 
 build() {
-    cd "${srcdir}/${pkgname}"
-    qmake-qt5 PREFIX=/usr
+    cd $pkgname-$pkgver
+    qmake-qt5 PREFIX=/usr "VERSION=${pkgver}"
     make
 }
 
 
 package() {
-    cd "${srcdir}/${pkgname}"
+    cd $pkgname-$pkgver
     make -j 1 INSTALL_ROOT="$pkgdir/" install
 }
- 
