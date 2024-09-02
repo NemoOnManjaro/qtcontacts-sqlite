@@ -5,7 +5,7 @@
 
 pkgname=qtcontacts-sqlite
 pkgver=0.3.19
-pkgrel=1
+pkgrel=2
 pkgdesc="SQLite-based plugin for QtPIM Contacts"
 arch=('x86_64' 'aarch64')
 url="https://github.com/sailfishos/qtcontacts-sqlite"
